@@ -17,29 +17,29 @@ const avatarMap = new Map();
 const showPlatform = GetBooleanParam("showPlatform", true);
 const showAvatar = GetBooleanParam("showAvatar", true);
 const showTimestamps = GetBooleanParam("showTimestamps", true);
-const showBadges = urlParams.get("showBadges") || true;
-const showPronouns = urlParams.get("showPronouns") || true;
-const showUsername = urlParams.get("showUsername") || true;
-const showMessage = urlParams.get("showMessage") || true;
-const font = urlParams.get("font") || true;
-const fontSize = urlParams.get("fontSize") || true;
+const showBadges = GetBooleanParam("showBadges", true);
+const showPronouns = GetBooleanParam("showPronouns", true);
+const showUsername = GetBooleanParam("showUsername", true);
+const showMessage = GetBooleanParam("showMessage", true);
+const font = urlParams.get("font") || "";
+const fontSize = urlParams.get("fontSize") || "30";
 
-const hideAfter = urlParams.get("hideAfter") || true;
-const excludeCommands = urlParams.get("excludeCommands") || true;
-const ignoredChatters = urlParams.get("ignoredChatters") || true;
+const hideAfter = urlParams.get("hideAfter") || "0";
+const excludeCommands = GetBooleanParam("excludeCommands", true);
+const ignoredChatters = urlParams.get("ignoredChatters") || "";
 
-const showTwitchMessages = urlParams.get("showTwitchMessages") || true;
-const showTwitchAnnouncements = urlParams.get("showTwitchAnnouncements") || true;
-const showTwitchSubs = urlParams.get("showTwitchSubs") || true;
-const showTwitchRaids = urlParams.get("showTwitchRaids") || true;
+const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
+const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
+const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
+const showTwitchRaids = GetBooleanParam("showTwitchRaids", true);
 
-const showYouTubeMessages = urlParams.get("showYouTubeMessages") || true;
-const showYouTubeSuperChats = urlParams.get("showYouTubeSuperChats") || true;
-const showYouTubeSuperStickers = urlParams.get("showYouTubeSuperStickers") || true;
-const showYouTubeMemberships = urlParams.get("showYouTubeMemberships") || true;
+const showYouTubeMessages = GetBooleanParam("showYouTubeMessages", true);
+const showYouTubeSuperChats = GetBooleanParam("showYouTubeSuperChats", true);
+const showYouTubeSuperStickers = GetBooleanParam("showYouTubeSuperStickers", true);
+const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 
-const showStreamlabsDonations = urlParams.get("showStreamlabsDonations") || true;
-const showStreamElementsTips = urlParams.get("showStreamElementsTips") || true;
+const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
+const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 
 
 
@@ -206,12 +206,9 @@ async function TwitchChatMessage(data) {
 
 	// Set timestamp
 	if (showTimestamps) {
-		console.log('timestamps are on: ' + showTimestamps)
 		timestampDiv.classList.add("timestamp");
 		timestampDiv.innerText = GetCurrentTimeFormatted();
 	}
-	else
-		console.log('timestamps are off: ' + showTimestamps)
 
 	// Set the username info
 	usernameDiv.innerText = data.message.displayName;
@@ -382,9 +379,10 @@ async function TwitchAnnouncement(data) {
 	const content = contentTemplate.content.cloneNode(true);
 
 	// Set timestamp
-	content.querySelector("#timestamp").classList.add("timestamp");
-	content.querySelector("#timestamp").innerText = GetCurrentTimeFormatted();
-
+	if (showTimestamps) {
+		content.querySelector("#timestamp").classList.add("timestamp");
+		content.querySelector("#timestamp").innerText = GetCurrentTimeFormatted();
+	}
 	content.querySelector("#username").innerText = data.user.name;
 	content.querySelector("#username").style.color = data.user.color;
 	content.querySelector("#message").innerText = data.text;
@@ -656,8 +654,10 @@ function YouTubeMessage(data) {
 	const messageDiv = instance.querySelector("#message");
 
 	// Set timestamp
-	timestampDiv.classList.add("timestamp");
-	timestampDiv.innerText = GetCurrentTimeFormatted();
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
 
 	// Set the message data
 	usernameDiv.innerText = data.user.name;
