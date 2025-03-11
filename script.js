@@ -217,7 +217,7 @@ async function TwitchChatMessage(data) {
 	// Set the username info
 	if (showUsername)
 	{
-		sernameDiv.innerText = data.message.displayName;
+		usernameDiv.innerText = data.message.displayName;
 		usernameDiv.style.color = data.message.color;
 	}
 	u
