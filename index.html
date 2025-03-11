@@ -1,17 +1,70 @@
 <!DOCTYPE html>
-<html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings</title>
-  <link rel="stylesheet" href="style.css">
+	<meta charset="UTF-8">
+	<link rel="shortcut icon" href="#" />
+	<link rel="stylesheet" href="./style.css" />
+	<script type="text/javascript" src="https://unpkg.com/@streamerbot/client/dist/streamerbot-client.js"></script>
 </head>
+
 <body>
-  <div class="settings-container">
-    <h1>Settings</h1>
-    <div id="settings-content"></div>
-    <!-- <button id="save-settings">Save Settings</button> -->
-  </div>
-  <script src="script.js"></script>
+	<div id="statusContainer">Connecting...</div>
+	<div id="mainContainer" class="slide-fade">
+		<ul id="messageList">
+		</ul>
+		<div id="IPutThisHereSoICanCalculateHowBigEachMessageIsSupposedToBeBeforeIAddItToTheMessageList">
+		</div>
+	</div>
+
+	</div>
+
+	<template id="messageTemplate">
+		<div id="messageContainer">
+			<label>
+				<div id="firstMessage">
+					<span>✨ First Time Chat</span>
+					<span> from viewer</span>
+				</div>
+				<label id="userInfo">
+					<span id="avatar"></span>
+					<span id="timestamp"></span>
+					<span id="platform"></span>
+					<span id="badgeList"></span>
+					<span id="pronouns"></span>
+					<span id="username"></span>
+					<span id="colon-separator" style="display: none;">: </span>
+					<br id="line-space">
+				</label>
+				<div id="reply">
+					<span>➥ Replying to <span id="replyUser"></span>: <span id="replyMsg"></span></span>
+				</div>
+				<span id="message"></span>
+			</label>
+		</div>
+	</template>
+
+	<template id="cardTemplate">
+		<div id="card">
+			<label id="header">
+				<span id="avatar"></span>
+				<span id="icon"></span>
+				<span id="title"></span>
+				<br id="line-space">
+			</label>
+			<span id="content"></span>
+		</div>
+	</template>
+
+	<template id="stickerTemplate">
+		<div id="sticker">
+			<div id="youtubeSuperSticker">
+				<div style="width: 100%; text-align: center;">
+					<img id="stickerImg">
+				</div>
+				<div id="stickerLabel"></div>
+			</div>
+		</div>
+	</template>
 </body>
-</html>
+
+<script src="./script.js"></script>

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>50% Iframe Example</title>
+    <title>Settings</title>
     <style>
         body {
             margin: 0; /* Remove default body margin */
@@ -41,7 +41,11 @@
 
     <iframe id="settings-container" src="http://127.0.0.1:3002/settings.html?settingsJson=https://nuttylmao.github.io/multichat-overlay/settings/settings.json"></iframe>
 
-    <iframe id="widget-container" src="http://www.example.com"></iframe>
+    <div id="widget-container">
+        <span id="widgetURL">
+        </span>
+        <iframe id="widget" src="http://www.example.com"></iframe>
+    </div>
 
     <script src="script.js"></script>
 
