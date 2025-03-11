@@ -14,9 +14,9 @@ const avatarMap = new Map();
 // OPTIONS //
 /////////////
 
-const showPlatform = urlParams.get("showPlatform") || true;
-const showAvatar = urlParams.get("showAvatar") || true;
-const showTimestamps = urlParams.get("showTimestamps") || true;
+const showPlatform = GetBooleanParam("showPlatform", true);
+const showAvatar = GetBooleanParam("showAvatar", true);
+const showTimestamps = GetBooleanParam("showTimestamps", true);
 const showBadges = urlParams.get("showBadges") || true;
 const showPronouns = urlParams.get("showPronouns") || true;
 const showUsername = urlParams.get("showUsername") || true;
@@ -205,11 +205,13 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set timestamp
-	if (showTimestamps)
-	{
+	if (showTimestamps) {
+		console.log('timestamps are on: ' + showTimestamps)
 		timestampDiv.classList.add("timestamp");
 		timestampDiv.innerText = GetCurrentTimeFormatted();
 	}
+	else
+		console.log('timestamps are off: ' + showTimestamps)
 
 	// Set the username info
 	usernameDiv.innerText = data.message.displayName;
@@ -217,8 +219,7 @@ async function TwitchChatMessage(data) {
 
 	// Set pronouns
 	const pronouns = await GetPronouns('twitch', data.message.username);
-	if (pronouns)
-	{
+	if (pronouns) {
 		pronounsDiv.classList.add("pronouns");
 		pronounsDiv.innerText = pronouns;
 	}
@@ -270,8 +271,7 @@ async function TwitchChatMessage(data) {
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0)
-	{
+	if (messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "twitch" & lastUserId == data.user.id)
@@ -282,19 +282,18 @@ async function TwitchChatMessage(data) {
 	if (role >= minimumRole & IsImageUrl(message)) {
 		const image = new Image();
 
-		image.onload = function() {
+		image.onload = function () {
 			image.style.padding = "20px 0px";
 			image.style.width = "100%";
 			messageDiv.innerHTML = messageDiv.innerHTML.replace(message, '');
 			messageDiv.appendChild(image);
-			
+
 			AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
 		};
 
 		image.src = message;
 	}
-	else
-	{
+	else {
 		AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
 	}
 }
@@ -380,7 +379,7 @@ async function TwitchAnnouncement(data) {
 	const contentTemplate = document.getElementById('messageTemplate');
 
 	// Create a new instance of the template
-	const content = contentTemplate.content.cloneNode(true);	
+	const content = contentTemplate.content.cloneNode(true);
 
 	// Set timestamp
 	content.querySelector("#timestamp").classList.add("timestamp");
@@ -408,8 +407,7 @@ async function TwitchAnnouncement(data) {
 
 	// Set pronouns
 	const pronouns = await GetPronouns('twitch', data.user.login);
-	if (pronouns)
-	{
+	if (pronouns) {
 		content.querySelector("#pronouns").classList.add("pronouns");
 		content.querySelector("#pronouns").innerText = pronouns;
 	}
@@ -709,7 +707,7 @@ function YouTubeMessage(data) {
 
 	// Render emotes
 	for (i in data.emotes) {
-		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;		
+		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
 		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
 	}
 
@@ -721,8 +719,7 @@ function YouTubeMessage(data) {
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0)
-	{
+	if (messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "youtube" & lastUserId == username)
@@ -905,6 +902,25 @@ async function StreamElementsTip(data) {
 //////////////////////
 // HELPER FUNCTIONS //
 //////////////////////
+
+function GetBooleanParam(paramName, defaultValue) {
+	const urlParams = new URLSearchParams(window.location.search);
+	const paramValue = urlParams.get(paramName);
+
+	if (paramValue === null) {
+		return defaultValue; // Parameter not found
+	}
+
+	const lowercaseValue = paramValue.toLowerCase(); // Handle case-insensitivity
+
+	if (lowercaseValue === 'true') {
+		return true;
+	} else if (lowercaseValue === 'false') {
+		return false;
+	} else {
+		return paramValue; // Return original string if not 'true' or 'false'
+	}
+}
 
 function GetCurrentTimeFormatted() {
 	const now = new Date();
