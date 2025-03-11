@@ -220,7 +220,6 @@ async function TwitchChatMessage(data) {
 		usernameDiv.innerText = data.message.displayName;
 		usernameDiv.style.color = data.message.color;
 	}
-	u
 
 	// Set pronouns
 	const pronouns = await GetPronouns('twitch', data.message.username);
