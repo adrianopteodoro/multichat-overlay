@@ -205,8 +205,11 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set timestamp
-	timestampDiv.classList.add("timestamp");
-	timestampDiv.innerText = GetCurrentTimeFormatted();
+	if (showTimestamps)
+	{
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
 
 	// Set the username info
 	usernameDiv.innerText = data.message.displayName;
