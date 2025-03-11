@@ -616,6 +616,7 @@ async function TwitchRaid(data) {
 	
 
 	// Set the text
+	const username = data.from_broadcaster_user_login;
 	const viewers = data.viewers;
 
 	titleDiv.innerText = `${username} is raiding`;
