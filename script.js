@@ -165,6 +165,9 @@ client.on('StreamElements.Tip', (response) => {
 ///////////////////////
 
 async function TwitchChatMessage(data) {
+	if (!showTwitchMessages)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('messageTemplate');
 
@@ -188,14 +191,14 @@ async function TwitchChatMessage(data) {
 
 	// Set First Time Chatter
 	const firstMessage = data.message.firstMessage;
-	if (firstMessage) {
+	if (firstMessage & showMessage) {
 		firstMessageDiv.style.display = 'block';
 		messageContainerDiv.classList.add("firstMessageHighlight");
 	}
 
 	// Set Reply Message
 	const isReply = data.message.isReply;
-	if (isReply) {
+	if (isReply & showMessage) {
 		const replyUser = data.message.reply.userName;
 		const replyMsg = data.message.reply.msgBody;
 
@@ -205,18 +208,23 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set timestamp
-	if (showTimestamps) {
+	if (showTimestamps)
+	{
 		timestampDiv.classList.add("timestamp");
 		timestampDiv.innerText = GetCurrentTimeFormatted();
 	}
 
 	// Set the username info
-	usernameDiv.innerText = data.message.displayName;
-	usernameDiv.style.color = data.message.color;
+	if (showUsername)
+	{
+		sernameDiv.innerText = data.message.displayName;
+		usernameDiv.style.color = data.message.color;
+	}
+	u
 
 	// Set pronouns
 	const pronouns = await GetPronouns('twitch', data.message.username);
-	if (pronouns) {
+	if (pronouns & showPronouns) {
 		pronounsDiv.classList.add("pronouns");
 		pronounsDiv.innerText = pronouns;
 	}
@@ -227,24 +235,34 @@ async function TwitchChatMessage(data) {
 	const role = data.message.role;
 
 	// Set message text
-	messageDiv.innerText = message;
+	if (showMessage)
+	{
+		messageDiv.innerText = message;
+	}	
 
 	// Set the "action" color
 	if (data.message.isMe)
 		messageDiv.style.color = messageColor;
 
 	// Render platform
-	const platformElements = `<img src="icons/platforms/twitch.png" class="platform"/>`;
-	platformDiv.innerHTML = platformElements;
+	if (showPlatform)
+	{
+		const platformElements = `<img src="icons/platforms/twitch.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
 
 	// Render badges
-	badgeListDiv.innerHTML = "";
-	for (i in data.message.badges) {
-		const badge = new Image();
-		badge.src = data.message.badges[i].imageUrl;
-		badge.classList.add("badge");
-		badgeListDiv.appendChild(badge);
+	if (showBadges)
+	{
+		badgeListDiv.innerHTML = "";
+		for (i in data.message.badges) {
+			const badge = new Image();
+			badge.src = data.message.badges[i].imageUrl;
+			badge.classList.add("badge");
+			badgeListDiv.appendChild(badge);
+		}
 	}
+	
 
 	// Render emotes
 	for (i in data.emotes) {
@@ -259,12 +277,15 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Render avatars
-	const username = data.message.username;
-	const avatarURL = await GetAvatar(username);
-	const avatar = new Image();
-	avatar.src = avatarURL;
-	avatar.classList.add("avatar");
-	avatarDiv.appendChild(avatar);
+	if (showAvatar)
+	{
+		const username = data.message.username;
+		const avatarURL = await GetAvatar(username);
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
@@ -337,6 +358,9 @@ async function TwitchAutomaticRewardRedemption(data) {
 }
 
 async function TwitchAnnouncement(data) {
+	if (!showTwitchAnnouncements)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -425,6 +449,9 @@ async function TwitchAnnouncement(data) {
 }
 
 async function TwitchSub(data) {
+	if (!showTwitchSubs)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -466,6 +493,9 @@ async function TwitchSub(data) {
 }
 
 async function TwitchResub(data) {
+	if (!showTwitchSubs)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -510,6 +540,9 @@ async function TwitchResub(data) {
 }
 
 async function TwitchGiftSub(data) {
+	if (!showTwitchSubs)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -551,6 +584,9 @@ async function TwitchGiftSub(data) {
 }
 
 async function TwitchRaid(data) {
+	if (!showTwitchRaids)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -568,13 +604,17 @@ async function TwitchRaid(data) {
 	// Set the card background colors
 	cardDiv.classList.add('twitch');
 
-	// Render avatars
-	const username = data.from_broadcaster_user_login;
-	const avatarURL = await GetAvatar(username);
-	const avatar = new Image();
-	avatar.src = avatarURL;
-	avatar.classList.add("avatar");
-	avatarDiv.appendChild(avatar);
+	if (showAvatar)
+	{
+		// Render avatars
+		const username = data.from_broadcaster_user_login;
+		const avatarURL = await GetAvatar(username);
+		const avatar = new Image();
+		avatar.src = avatarURL;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+	
 
 	// Set the text
 	const viewers = data.viewers;
@@ -638,6 +678,9 @@ function TwitchChatCleared(data) {
 }
 
 function YouTubeMessage(data) {
+	if (!showYouTubeMessages)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('messageTemplate');
 
@@ -660,16 +703,26 @@ function YouTubeMessage(data) {
 	}
 
 	// Set the message data
-	usernameDiv.innerText = data.user.name;
-	usernameDiv.style.color = "#f70000";	// YouTube users do not have colors, so just set it to red
-	messageDiv.innerText = data.message;
+	if (showUsername)
+	{
+		usernameDiv.innerText = data.user.name;
+		usernameDiv.style.color = "#f70000";	// YouTube users do not have colors, so just set it to red
+	}
+
+	if (showMessage) {
+		messageDiv.innerText = data.message;
+	}
+	
 
 	// Render platform
-	const platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
-	platformDiv.innerHTML = platformElements;
+	if (showPlatform)
+	{
+		const platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
 
 	// Render badges
-	if (data.user.isOwner) {
+	if (data.user.isOwner & showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-broadcaster.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -678,7 +731,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isModerator) {
+	if (data.user.isModerator & showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-moderator.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -687,7 +740,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isSponsor) {
+	if (data.user.isSponsor & showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-member.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -696,7 +749,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isVerified) {
+	if (data.user.isVerified & showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-verified.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -712,10 +765,14 @@ function YouTubeMessage(data) {
 	}
 
 	// Render avatars
-	const avatar = new Image();
-	avatar.src = data.user.profileImageUrl;
-	avatar.classList.add("avatar");
-	avatarDiv.appendChild(avatar);
+	if (showAvatar)
+	{
+		const avatar = new Image();
+		avatar.src = data.user.profileImageUrl;
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
+	
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
@@ -730,6 +787,9 @@ function YouTubeMessage(data) {
 }
 
 function YouTubeSuperChat(data) {
+	if (!showYouTubeSuperChats)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -755,6 +815,8 @@ function YouTubeSuperChat(data) {
 }
 
 function YouTubeSuperSticker(data) {
+	if (!showYouTubeSuperStickers)
+		return;
 
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
@@ -788,6 +850,9 @@ function YouTubeSuperSticker(data) {
 }
 
 function YouTubeNewSponsor(data) {
+	if (!showYouTubeMemberships)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -813,6 +878,9 @@ function YouTubeNewSponsor(data) {
 }
 
 function YouTubeGiftMembershipReceived(data) {
+	if (!showYouTubeMemberships)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -838,6 +906,9 @@ function YouTubeGiftMembershipReceived(data) {
 }
 
 async function StreamlabsDonation(data) {
+	if (!showStreamlabsDonations)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
@@ -868,6 +939,9 @@ async function StreamlabsDonation(data) {
 }
 
 async function StreamElementsTip(data) {
+	if (!showStreamElementsTips)
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('cardTemplate');
 
