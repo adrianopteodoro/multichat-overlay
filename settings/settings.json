@@ -61,7 +61,7 @@
 			"label": "Font",
 			"description": "",
 			"type": "text",
-			"defaultValue": "Helvetica",
+			"defaultValue": "",
 			"group": "Appearance"
 		},
 		{
@@ -131,7 +131,7 @@
 					"label": "Nobody"
 				}
 			],
-			"defaultValue": "StreamElements,Streamlabs",
+			"defaultValue": 20,
 			"group": "General"
 		},
 		{
