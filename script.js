@@ -191,14 +191,14 @@ async function TwitchChatMessage(data) {
 
 	// Set First Time Chatter
 	const firstMessage = data.message.firstMessage;
-	if (firstMessage & showMessage) {
+	if (firstMessage && showMessage) {
 		firstMessageDiv.style.display = 'block';
 		messageContainerDiv.classList.add("firstMessageHighlight");
 	}
 
 	// Set Reply Message
 	const isReply = data.message.isReply;
-	if (isReply & showMessage) {
+	if (isReply && showMessage) {
 		const replyUser = data.message.reply.userName;
 		const replyMsg = data.message.reply.msgBody;
 
@@ -223,7 +223,7 @@ async function TwitchChatMessage(data) {
 
 	// Set pronouns
 	const pronouns = await GetPronouns('twitch', data.message.username);
-	if (pronouns & showPronouns) {
+	if (pronouns && showPronouns) {
 		pronounsDiv.classList.add("pronouns");
 		pronounsDiv.innerText = pronouns;
 	}
@@ -260,8 +260,7 @@ async function TwitchChatMessage(data) {
 			badge.classList.add("badge");
 			badgeListDiv.appendChild(badge);
 		}
-	}
-	
+	}	
 
 	// Render emotes
 	for (i in data.emotes) {
@@ -271,8 +270,12 @@ async function TwitchChatMessage(data) {
 
 	// Render cheermotes
 	for (i in data.cheerEmotes) {
-		const cheerEmoteElement = `<img src="${data.cheerEmotes[i].imageUrl}" class="emote"/>`;
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.cheerEmotes[i].name}\\b`), cheerEmoteElement);
+		const bits = data.cheerEmotes[i].bits;
+		const imageUrl = data.cheerEmotes[i].imageUrl;
+		const name = data.cheerEmotes[i].name;
+		const cheerEmoteElement = `<img src="${imageUrl}" class="emote"/>`;
+		const bitsElements = `<span class="bits">${bits}</span>`
+		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${name}${bits}\\b`, 'i'), cheerEmoteElement + bitsElements);
 	}
 
 	// Render avatars
@@ -291,12 +294,12 @@ async function TwitchChatMessage(data) {
 	if (messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "twitch" & lastUserId == data.user.id)
+		if (lastPlatform == "twitch" && lastUserId == data.user.id)
 			userInfoDiv.style.display = "none";
 	}
 
 	// Embed image
-	if (role >= minimumRole & IsImageUrl(message)) {
+	if (role >= minimumRole && IsImageUrl(message)) {
 		const image = new Image();
 
 		image.onload = function () {
@@ -722,7 +725,7 @@ function YouTubeMessage(data) {
 	}
 
 	// Render badges
-	if (data.user.isOwner & showBadges) {
+	if (data.user.isOwner && showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-broadcaster.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -731,7 +734,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isModerator & showBadges) {
+	if (data.user.isModerator && showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-moderator.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -740,7 +743,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isSponsor & showBadges) {
+	if (data.user.isSponsor && showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-member.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -749,7 +752,7 @@ function YouTubeMessage(data) {
 		badgeListDiv.appendChild(badge);
 	}
 
-	if (data.user.isVerified & showBadges) {
+	if (data.user.isVerified && showBadges) {
 		const badge = new Image();
 		badge.src = `icons/badges/youtube-verified.svg`;
 		badge.style.filter = `invert(100%)`;
@@ -779,11 +782,11 @@ function YouTubeMessage(data) {
 	if (messageList.children.length > 0) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
-		if (lastPlatform == "youtube" & lastUserId == username)
+		if (lastPlatform == "youtube" && lastUserId == data.user.id)
 			userInfoDiv.style.display = "none";
 	}
 
-	AddMessageItem(instance, data.eventId, 'youtube', username);
+	AddMessageItem(instance, data.eventId, 'youtube', data.user.id);
 }
 
 function YouTubeSuperChat(data) {
@@ -1139,29 +1142,124 @@ function SetConnectionStatus(connected) {
 }
 
 // let data = `{
-//     "tier": "MVP",
-//     "gifter": {
-//         "id": "UCoRAcQTA-wMmKs0-wzdTv_Q",
-//         "url": "http://www.youtube.com/channel/UCoRAcQTA-wMmKs0-wzdTv_Q",
-//         "name": "Braden1026",
-//         "profileImageUrl": "https://yt3.ggpht.com/6xJpCBeqZnrfLhd8UQxAW6m0X3B82Gv5W8wvk-tou70CO6Mfg8q80m5j8sag3FYw6odUlCXQeg=s88-c-k-c0x00ffffff-no-rj",
-//         "isOwner": false,
-//         "isModerator": false,
-//         "isSponsor": true,
-//         "isVerified": false
+//     "bits": 1,
+//     "cheerEmotes": [
+//         {
+//             "bits": 1,
+//             "color": "#979797",
+//             "type": "CheerEmote",
+//             "name": "Cheer",
+//             "startIndex": 0,
+//             "endIndex": 5,
+//             "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif"
+//         }
+//     ],
+//     "message": {
+//         "internal": false,
+//         "msgId": "ac304b97-35fd-4623-9ab3-2e68f24e770a",
+//         "userId": "24586202",
+//         "username": "cookievscookie",
+//         "role": 1,
+//         "subscriber": true,
+//         "subscriptionTier": "1000",
+//         "displayName": "CookieVsCookie",
+//         "color": "#DEC27A",
+//         "channel": "nutty",
+//         "message": "Cheer1 wasting all of my money 1 bit at time",
+//         "isHighlighted": false,
+//         "isMe": false,
+//         "isCustomReward": false,
+//         "isAnonymous": false,
+//         "isReply": false,
+//         "bits": 1,
+//         "firstMessage": false,
+//         "returningChatter": false,
+//         "hasBits": true,
+//         "emotes": [],
+//         "cheerEmotes": [
+//             {
+//                 "bits": 1,
+//                 "color": "#979797",
+//                 "type": "CheerEmote",
+//                 "name": "Cheer",
+//                 "startIndex": 0,
+//                 "endIndex": 5,
+//                 "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif"
+//             }
+//         ],
+//         "badges": [
+//             {
+//                 "name": "subscriber",
+//                 "version": "3",
+//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/c2d0acb4-a706-43a1-9d2b-0458cde2ba93/3",
+//                 "info": "4"
+//             },
+//             {
+//                 "name": "share-the-love",
+//                 "version": "1",
+//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/2de71f4f-b152-4308-a426-127a4cf8003a/3",
+//                 "info": ""
+//             }
+//         ],
+//         "monthsSubscribed": 4,
+//         "isTest": false,
+//         "sharedChat": false,
+//         "sourceBadges": []
 //     },
-//     "eventId": "LCC.EhwKGkNON3gwX0hjLUlzREZZb0sxZ0FkdzZFd2xn",
 //     "user": {
-//         "id": "UCeP_O6Yrzh_6tTeqmOzPSgA",
-//         "url": "http://www.youtube.com/channel/UCeP_O6Yrzh_6tTeqmOzPSgA",
-//         "name": "Jay Little",
-//         "profileImageUrl": "https://yt3.ggpht.com/0etJfax2KXCioZiagFV8jEDYfhjR-1IKoQ6caLO594bcdk3M1tOzQuEUTmtip1AAW-tOEznDZg=s88-c-k-c0x00ffffff-no-rj",
-//         "isOwner": false,
-//         "isModerator": false,
-//         "isSponsor": true,
-//         "isVerified": false
+//         "role": 1,
+//         "badges": [
+//             {
+//                 "name": "subscriber",
+//                 "version": "3",
+//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/c2d0acb4-a706-43a1-9d2b-0458cde2ba93/3",
+//                 "info": "4"
+//             },
+//             {
+//                 "name": "share-the-love",
+//                 "version": "1",
+//                 "imageUrl": "https://static-cdn.jtvnw.net/badges/v1/2de71f4f-b152-4308-a426-127a4cf8003a/3",
+//                 "info": ""
+//             }
+//         ],
+//         "color": "#DEC27A",
+//         "subscribed": true,
+//         "subscriptionTier": "1000",
+//         "monthsSubscribed": 4,
+//         "id": "24586202",
+//         "login": "cookievscookie",
+//         "name": "CookieVsCookie",
+//         "type": "twitch"
 //     },
-//     "publishedAt": "2025-03-08T06:41:14.925125+11:00"
+//     "messageId": "ac304b97-35fd-4623-9ab3-2e68f24e770a",
+//     "meta": {
+//         "internal": false,
+//         "firstMessage": false,
+//         "returningChatter": false,
+//         "isHighlighted": false,
+//         "isMe": false,
+//         "isCustomReward": false,
+//         "isTest": false
+//     },
+//     "anonymous": false,
+//     "text": "Cheer1 wasting all of my money 1 bit at time",
+//     "emotes": [],
+//     "parts": [
+//         {
+//             "bits": 1,
+//             "color": "#979797",
+//             "imageUrl": "https://d3aqoihi2n8ty8.cloudfront.net/actions/cheer/dark/animated/1/4.gif",
+//             "type": "cheer",
+//             "text": "Cheer"
+//         },
+//         {
+//             "type": "text",
+//             "text": " wasting all of my money 1 bit at time"
+//         }
+//     ],
+//     "isReply": false,
+//     "isSharedChat": false,
+//     "isTest": false
 // }`;
 
-// YouTubeGiftMembershipReceived(JSON.parse(data));
+// TwitchChatMessage(JSON.parse(data));

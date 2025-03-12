@@ -93,6 +93,13 @@ li {
 	padding: 5px 15px;
 }
 
+.bits {
+	background: #adadad46;
+	border-radius: calc(var(--border-radius) / 2);
+	font-size: 0.7rem;
+	padding: 5px 10px;
+}
+
 .platform,
 .badge,
 .emote {
