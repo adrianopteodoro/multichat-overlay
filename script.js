@@ -305,13 +305,13 @@ async function TwitchChatMessage(data) {
 		image.onload = function () {
 			image.style.padding = "20px 0px";
 			image.style.width = "100%";
-			messageDiv.innerHTML = messageDiv.innerHTML.replace(message, '');
+			messageDiv.innerHTML = '';
 			messageDiv.appendChild(image);
 
 			AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
 		};
 
-		image.src = message;
+		image.src = "https://external-content.duckduckgo.com/iu/?u=" + message;
 	}
 	else {
 		AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
