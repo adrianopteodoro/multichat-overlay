@@ -7,7 +7,6 @@ const urlParams = new URLSearchParams(queryString);
 
 const sbServerAddress = urlParams.get("address") || "127.0.0.1";
 const sbServerPort = urlParams.get("port") || "8080";
-const minimumRole = 2;							// 1 - Viewer, 2 - VIP, 3 - Moderator, 4 - Broadcaster
 const avatarMap = new Map();
 
 /////////////
@@ -24,9 +23,10 @@ const showMessage = GetBooleanParam("showMessage", true);
 const font = urlParams.get("font") || "";
 const fontSize = urlParams.get("fontSize") || "30";
 
-const hideAfter = urlParams.get("hideAfter") || "0";
+const hideAfter = GetIntParam("hideAfter") || 0;
 const excludeCommands = GetBooleanParam("excludeCommands", true);
-const ignoredChatters = urlParams.get("ignoredChatters") || "";
+const ignoreChatters = urlParams.get("ignoreChatters") || "";
+const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel") || 20;
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
@@ -41,7 +41,17 @@ const showYouTubeMemberships = GetBooleanParam("showYouTubeMemberships", true);
 const showStreamlabsDonations = GetBooleanParam("showStreamlabsDonations", true)
 const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 
+// Set fonts for the widget
+document.body.style.fontFamily = font;
+document.body.style.fontSize = `${fontSize}px`;
 
+// Get a list of chatters to ignore
+const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
+
+
+
+
+// hideAfter=0
 
 /////////////////////////
 // STREAMER.BOT CLIENT //
@@ -168,6 +178,14 @@ async function TwitchChatMessage(data) {
 	if (!showTwitchMessages)
 		return;
 
+	// Don't post messages starting with "!"
+	if (data.message.message.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.message.username))
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('messageTemplate');
 
@@ -208,15 +226,13 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Set timestamp
-	if (showTimestamps)
-	{
+	if (showTimestamps) {
 		timestampDiv.classList.add("timestamp");
 		timestampDiv.innerText = GetCurrentTimeFormatted();
 	}
 
 	// Set the username info
-	if (showUsername)
-	{
+	if (showUsername) {
 		usernameDiv.innerText = data.message.displayName;
 		usernameDiv.style.color = data.message.color;
 	}
@@ -234,25 +250,22 @@ async function TwitchChatMessage(data) {
 	const role = data.message.role;
 
 	// Set message text
-	if (showMessage)
-	{
+	if (showMessage) {
 		messageDiv.innerText = message;
-	}	
+	}
 
 	// Set the "action" color
 	if (data.message.isMe)
 		messageDiv.style.color = messageColor;
 
 	// Render platform
-	if (showPlatform)
-	{
+	if (showPlatform) {
 		const platformElements = `<img src="icons/platforms/twitch.png" class="platform"/>`;
 		platformDiv.innerHTML = platformElements;
 	}
 
 	// Render badges
-	if (showBadges)
-	{
+	if (showBadges) {
 		badgeListDiv.innerHTML = "";
 		for (i in data.message.badges) {
 			const badge = new Image();
@@ -260,7 +273,7 @@ async function TwitchChatMessage(data) {
 			badge.classList.add("badge");
 			badgeListDiv.appendChild(badge);
 		}
-	}	
+	}
 
 	// Render emotes
 	for (i in data.emotes) {
@@ -279,8 +292,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Render avatars
-	if (showAvatar)
-	{
+	if (showAvatar) {
 		const username = data.message.username;
 		const avatarURL = await GetAvatar(username);
 		const avatar = new Image();
@@ -299,7 +311,7 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Embed image
-	if (role >= minimumRole && IsImageUrl(message)) {
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'twitch') && IsImageUrl(message)) {
 		const image = new Image();
 
 		image.onload = function () {
@@ -311,7 +323,11 @@ async function TwitchChatMessage(data) {
 			AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
 		};
 
-		image.src = "https://external-content.duckduckgo.com/iu/?u=" + message;
+		const urlObj = new URL(message);
+		urlObj.search = '';
+		urlObj.hash = '';
+
+		image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
 	}
 	else {
 		AddMessageItem(instance, data.message.msgId, 'twitch', data.user.id);
@@ -606,8 +622,7 @@ async function TwitchRaid(data) {
 	// Set the card background colors
 	cardDiv.classList.add('twitch');
 
-	if (showAvatar)
-	{
+	if (showAvatar) {
 		// Render avatars
 		const username = data.from_broadcaster_user_login;
 		const avatarURL = await GetAvatar(username);
@@ -616,7 +631,7 @@ async function TwitchRaid(data) {
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
-	
+
 
 	// Set the text
 	const username = data.from_broadcaster_user_login;
@@ -646,7 +661,11 @@ function TwitchChatMessageDeleted(data) {
 
 	// Remove the items
 	messagesToRemove.forEach(item => {
-		messageList.removeChild(item);
+		item.style.opacity = 0;
+		item.style.height = 0;
+		setTimeout(function() {
+			messageList.removeChild(item);
+		}, 1000);
 	});
 }
 
@@ -684,6 +703,14 @@ function YouTubeMessage(data) {
 	if (!showYouTubeMessages)
 		return;
 
+	// Don't post messages starting with "!"
+	if (data.message.startsWith("!") && excludeCommands)
+		return;
+
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.user.name))
+		return;
+
 	// Get a reference to the template
 	const template = document.getElementById('messageTemplate');
 
@@ -706,8 +733,7 @@ function YouTubeMessage(data) {
 	}
 
 	// Set the message data
-	if (showUsername)
-	{
+	if (showUsername) {
 		usernameDiv.innerText = data.user.name;
 		usernameDiv.style.color = "#f70000";	// YouTube users do not have colors, so just set it to red
 	}
@@ -715,11 +741,10 @@ function YouTubeMessage(data) {
 	if (showMessage) {
 		messageDiv.innerText = data.message;
 	}
-	
+
 
 	// Render platform
-	if (showPlatform)
-	{
+	if (showPlatform) {
 		const platformElements = `<img src="icons/platforms/youtube.png" class="platform"/>`;
 		platformDiv.innerHTML = platformElements;
 	}
@@ -768,14 +793,13 @@ function YouTubeMessage(data) {
 	}
 
 	// Render avatars
-	if (showAvatar)
-	{
+	if (showAvatar) {
 		const avatar = new Image();
 		avatar.src = data.user.profileImageUrl;
 		avatar.classList.add("avatar");
 		avatarDiv.appendChild(avatar);
 	}
-	
+
 
 	// Hide the header if the same username sends a message twice in a row
 	const messageList = document.getElementById("messageList");
@@ -786,7 +810,29 @@ function YouTubeMessage(data) {
 			userInfoDiv.style.display = "none";
 	}
 
-	AddMessageItem(instance, data.eventId, 'youtube', data.user.id);
+	// Embed image
+	const message = data.message;
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'youtube') && IsImageUrl(message)) {
+		const image = new Image();
+
+		image.onload = function () {
+			image.style.padding = "20px 0px";
+			image.style.width = "100%";
+			messageDiv.innerHTML = '';
+			messageDiv.appendChild(image);
+
+			AddMessageItem(instance, data.message.msgId, 'youtube', data.user.id);
+		};
+
+		const urlObj = new URL(message);
+		urlObj.search = '';
+		urlObj.hash = '';
+
+		image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
+	}
+	else {
+		AddMessageItem(instance, data.eventId, 'youtube', data.user.id);
+	}
 }
 
 function YouTubeSuperChat(data) {
@@ -999,6 +1045,23 @@ function GetBooleanParam(paramName, defaultValue) {
 	}
 }
 
+function GetIntParam(paramName) {
+	const urlParams = new URLSearchParams(window.location.search);
+	const paramValue = urlParams.get(paramName);
+
+	if (paramValue === null) {
+		return null; // or undefined, or a default value, depending on your needs
+	}
+
+	const intValue = parseInt(paramValue, 10); // Parse as base 10 integer
+
+	if (isNaN(intValue)) {
+		return null; // or handle the error in another way, e.g., throw an error
+	}
+
+	return intValue;
+}
+
 function GetCurrentTimeFormatted() {
 	const now = new Date();
 	let hours = now.getHours();
@@ -1037,8 +1100,19 @@ async function GetPronouns(platform, username) {
 		return '';
 }
 
+// function IsImageUrl(url) {
+// 	return url.match(/^http.*\.(jpeg|jpg|gif|png)$/) != null;
+// }
+
 function IsImageUrl(url) {
-	return url.match(/^http.*\.(jpeg|jpg|gif|png)$/) != null;
+	try {
+		const { pathname } = new URL(url);
+		// Only check the pathname since query parameters are not included in it.
+		return /\.(png|jpe?g|webp|gif)$/i.test(pathname);
+	} catch (error) {
+		// Return false if the URL is invalid.
+		return false;
+	}
 }
 
 function AddMessageItem(element, elementID, platform, userId) {
@@ -1074,6 +1148,16 @@ function AddMessageItem(element, elementID, platform, userId) {
 		}
 
 		tempDiv.innerHTML = '';
+		
+		if (hideAfter > 0)
+		{
+			setTimeout(function () {
+				lineItem.style.opacity = 0;
+				setTimeout(function() {
+					messageList.removeChild(lineItem);
+				}, 1000);
+			}, hideAfter * 1000);
+		}
 
 	}, 100);
 }
@@ -1113,6 +1197,35 @@ function FindFirstImageUrl(jsonObject) {
 	}
 
 	return iterate(jsonObject);
+}
+
+function IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(targetPermissions, data, platform) {
+	return GetPermissionLevel(data, platform) >= targetPermissions;
+}
+
+function GetPermissionLevel(data, platform) {
+	switch (platform) {
+		case 'twitch':
+			if (data.message.role >= 4)
+				return 40;
+			else if (data.message.role >= 3)
+				return 30;
+			else if (data.message.role >= 2)
+				return 20;
+			else if (data.message.role >= 2 || data.message.subscriber)
+				return 15;
+			else
+				return 10;
+		case 'youtube':
+			if (data.user.isOwner)
+				return 40;
+			else if (data.user.isModerator)
+				return 30;
+			else if (data.user.isSponsor)
+				return 15;
+			else
+				return 10;
+	}
 }
 
 

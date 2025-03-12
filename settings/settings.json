@@ -101,7 +101,7 @@
 			"group": "General"
 		},
 		{
-			"id": "imageEmbedPermissions",
+			"id": "imageEmbedPermissionLevel",
 			"label": "Embed Images",
 			"description": "Automatically embed images for these users",
 			"type": "select",
@@ -127,7 +127,7 @@
 					"label": "Everyone"
 				},
 				{
-					"value": 0,
+					"value": 69420,
 					"label": "Nobody"
 				}
 			],
@@ -215,7 +215,7 @@
 			"group": "Which donation messages do you want to see?"
 		},
 		{
-			"id": "sbServerAddress",
+			"id": "address",
 			"label": "Address",
 			"description": "Streamer.bot Websocket Server Address",
 			"type": "text",
@@ -223,7 +223,7 @@
 			"group": "Advanced"
 		},
 		{
-			"id": "sbServerPort",
+			"id": "port",
 			"label": "Port",
 			"description": "Streamer.bot Websocket Server Port",
 			"type": "text",
