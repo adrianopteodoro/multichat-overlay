@@ -120,6 +120,24 @@
 			"group": "General"
 		},
 		{
+			"id": "scrollDirection",
+			"label": "Scroll Direction",
+			"description": "",
+			"type": "select",
+			"options": [
+				{
+					"value": 1,
+					"label": "Up"
+				},
+				{
+					"value": 2,
+					"label": "Down"
+				}
+			],
+			"defaultValue": 1,
+			"group": "General"
+		},
+		{
 			"id": "imageEmbedPermissionLevel",
 			"label": "Embed Images",
 			"description": "Automatically embed images for these users",

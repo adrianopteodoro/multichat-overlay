@@ -28,6 +28,7 @@ const opacity = urlParams.get("opacity") || "0.85";
 const hideAfter = GetIntParam("hideAfter") || 0;
 const excludeCommands = GetBooleanParam("excludeCommands", true);
 const ignoreChatters = urlParams.get("ignoreChatters") || "";
+const scrollDirection = GetIntParam("scrollDirection") || 1;
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel") || 20;
 
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
@@ -46,22 +47,32 @@ const showStreamElementsTips = GetBooleanParam("showStreamElementsTips", true);
 // Set fonts for the widget
 document.body.style.fontFamily = font;
 document.body.style.fontSize = `${fontSize}px`;
+
+// Set the background color
 const opacity255 = Math.round(parseFloat(opacity) * 255);
 let hexOpacity = opacity255.toString(16);
-
 if (hexOpacity.length < 2) {
 	hexOpacity = "0" + hexOpacity;
 }
-console.log(`#${background}${hexOpacity}`);
 document.body.style.background = `${background}${hexOpacity}`;
 
 // Get a list of chatters to ignore
 const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLowerCase()) || [];
 
+// Set the scroll direction
+
+switch (scrollDirection)
+{
+	case 1:
+		document.getElementById('messageList').classList.add('normalScrollDirection');
+		break;
+	case 2:
+		document.getElementById('messageList').classList.add('reverseScrollDirection');
+		break;
+}
+	
 
 
-
-// hideAfter=0
 
 /////////////////////////
 // STREAMER.BOT CLIENT //
@@ -312,8 +323,9 @@ async function TwitchChatMessage(data) {
 	}
 
 	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0) {
+	if (messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "twitch" && lastUserId == data.user.id)
@@ -812,8 +824,9 @@ function YouTubeMessage(data) {
 
 
 	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
 	const messageList = document.getElementById("messageList");
-	if (messageList.children.length > 0) {
+	if (messageList.children.length > 0 && scrollDirection != 2) {
 		const lastPlatform = messageList.lastChild.dataset.platform;
 		const lastUserId = messageList.lastChild.dataset.userId;
 		if (lastPlatform == "youtube" && lastUserId == data.user.id)
@@ -1138,6 +1151,10 @@ function AddMessageItem(element, elementID, platform, userId) {
 		lineItem.id = elementID;
 		lineItem.dataset.platform = platform;
 		lineItem.dataset.userId = userId;
+
+		// Set scroll direction
+		if (scrollDirection == 2)
+			lineItem.classList.add('reverseLineItemDirection');
 
 		// Move the element from the temp div to the new line item
 		while (tempDiv.firstChild) {
