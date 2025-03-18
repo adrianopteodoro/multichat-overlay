@@ -127,11 +127,11 @@
 			"options": [
 				{
 					"value": 1,
-					"label": "Up"
+					"label": "Bottom To Top (Like A Normal Person)"
 				},
 				{
 					"value": 2,
-					"label": "Down"
+					"label": "Top To Bottom (Like A Weird Person)"
 				}
 			],
 			"defaultValue": 1,
