@@ -83,7 +83,7 @@
 			"group": "Appearance"
 		},
 		{
-			"id": "background",
+			"id": "opacity",
 			"label": "Background Opacity",
 			"description": "",
 			"type": "number",
