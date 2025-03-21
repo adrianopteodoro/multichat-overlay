@@ -811,7 +811,8 @@ function YouTubeMessage(data) {
 	// Render emotes
 	for (i in data.emotes) {
 		const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-		messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
+		// messageDiv.innerHTML = messageDiv.innerHTML.replace(new RegExp(`\\b${data.emotes[i].name}\\b`), emoteElement);
+		messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
 	}
 
 	// Render avatars

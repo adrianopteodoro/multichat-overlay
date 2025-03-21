@@ -83,7 +83,7 @@ li {
 #firstMessage {
 	display: none;
 	font-weight: 500;
-	font-size: 0.7rem;
+	font-size: 0.7em;
 }
 
 .firstMessageHighlight {
@@ -102,15 +102,17 @@ li {
 .timestamp,
 .pronouns {
 	background: #adadad46;
-	border-radius: var(--border-radius);
+	/* border-radius: var(--border-radius); */
+	border-radius: 1em;
 	font-size: 0.7em;
-	padding: 5px 15px;
+	/* padding: 5px 15px; */
+	padding: 0.15em 0.5em;
 }
 
 .bits {
 	background: #adadad46;
 	border-radius: calc(var(--border-radius) / 2);
-	font-size: 0.7rem;
+	font-size: 0.7em;
 	padding: 5px 10px;
 }
 
@@ -140,7 +142,7 @@ li {
 	overflow: hidden;
 	white-space: nowrap;
 	text-overflow: ellipsis;
-	font-size: 0.7rem;
+	font-size: 0.7em;
 	opacity: 0.5;
 }
 
