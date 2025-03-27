@@ -48,7 +48,15 @@
         "showStreamlabsDonationsDescription": "Show Streamlabs donation messages.",
         "showStreamElementsTipsDescription": "Show StreamElements tip messages.",
         "addressDescription": "Streamer.bot Websocket Server Address.",
-        "portDescription": "Streamer.bot Websocket Server Port."
+        "portDescription": "Streamer.bot Websocket Server Port.",
+        "scrollDirection1": "Normal",
+        "scrollDirection2": "Reversed",
+        "imageEmbedPermissionLevel40": "Broadcaster",
+        "imageEmbedPermissionLevel30": "Mods & Broadcaster",
+        "imageEmbedPermissionLevel20": "VIPs, Mods & Broadcaster",
+        "imageEmbedPermissionLevel15": "Subs, VIPs, Mods & Broadcaster",
+        "imageEmbedPermissionLevel10": "Everyone",
+        "imageEmbedPermissionLevel69420": "Nobody"
     },
     "pt": {
         "showPlatform": "Mostrar Plataforma",
@@ -99,7 +107,15 @@
         "showStreamlabsDonationsDescription": "Mostrar mensagens de doação do Streamlabs.",
         "showStreamElementsTipsDescription": "Mostrar mensagens de gorjetas do StreamElements.",
         "addressDescription": "Endereço do servidor Websocket do Streamer.bot.",
-        "portDescription": "Porta do servidor Websocket do Streamer.bot."
+        "portDescription": "Porta do servidor Websocket do Streamer.bot.",
+        "scrollDirection1": "Normal",
+        "scrollDirection2": "Invertido",
+        "imageEmbedPermissionLevel40": "Transmissor",
+        "imageEmbedPermissionLevel30": "Mods e Transmissor",
+        "imageEmbedPermissionLevel20": "VIPs, Mods e Transmissor",
+        "imageEmbedPermissionLevel15": "Subs, VIPs, Mods e Transmissor",
+        "imageEmbedPermissionLevel10": "Todos",
+        "imageEmbedPermissionLevel69420": "Ninguém"
     },
     "es": {
         "showPlatform": "Mostrar Plataforma",
@@ -150,7 +166,15 @@
         "showStreamlabsDonationsDescription": "Mostrar mensajes de donación de Streamlabs.",
         "showStreamElementsTipsDescription": "Mostrar mensajes de propinas de StreamElements.",
         "addressDescription": "Dirección del servidor Websocket de Streamer.bot.",
-        "portDescription": "Puerto del servidor Websocket de Streamer.bot."
+        "portDescription": "Puerto del servidor Websocket de Streamer.bot.",
+        "scrollDirection1": "Normal",
+        "scrollDirection2": "Invertido",
+        "imageEmbedPermissionLevel40": "Transmisor",
+        "imageEmbedPermissionLevel30": "Mods y Transmisor",
+        "imageEmbedPermissionLevel20": "VIPs, Mods y Transmisor",
+        "imageEmbedPermissionLevel15": "Subs, VIPs, Mods y Transmisor",
+        "imageEmbedPermissionLevel10": "Todos",
+        "imageEmbedPermissionLevel69420": "Nadie"
     },
     "fr": {
         "showPlatform": "Afficher la Plateforme",
@@ -201,7 +225,15 @@
         "showStreamlabsDonationsDescription": "Afficher les messages de don Streamlabs.",
         "showStreamElementsTipsDescription": "Afficher les messages de pourboires StreamElements.",
         "addressDescription": "Adresse du serveur Websocket de Streamer.bot.",
-        "portDescription": "Port du serveur Websocket de Streamer.bot."
+        "portDescription": "Port du serveur Websocket de Streamer.bot.",
+        "scrollDirection1": "Normal",
+        "scrollDirection2": "Inversé",
+        "imageEmbedPermissionLevel40": "Diffuseur",
+        "imageEmbedPermissionLevel30": "Mods et Diffuseur",
+        "imageEmbedPermissionLevel20": "VIPs, Mods et Diffuseur",
+        "imageEmbedPermissionLevel15": "Abonnés, VIPs, Mods et Diffuseur",
+        "imageEmbedPermissionLevel10": "Tout le monde",
+        "imageEmbedPermissionLevel69420": "Personne"
     },
     "de": {
         "showPlatform": "Plattform Anzeigen",
@@ -252,6 +284,14 @@
         "showStreamlabsDonationsDescription": "Streamlabs-Spendennachrichten anzeigen.",
         "showStreamElementsTipsDescription": "StreamElements-Trinkgeldnachrichten anzeigen.",
         "addressDescription": "Websocket-Serveradresse von Streamer.bot.",
-        "portDescription": "Websocket-Serverport von Streamer.bot."
+        "portDescription": "Websocket-Serverport von Streamer.bot.",
+        "scrollDirection1": "Normal",
+        "scrollDirection2": "Umgekehrt",
+        "imageEmbedPermissionLevel40": "Sender",
+        "imageEmbedPermissionLevel30": "Mods und Sender",
+        "imageEmbedPermissionLevel20": "VIPs, Mods und Sender",
+        "imageEmbedPermissionLevel15": "Abonnenten, VIPs, Mods und Sender",
+        "imageEmbedPermissionLevel10": "Jeder",
+        "imageEmbedPermissionLevel69420": "Niemand"
     }
 }
