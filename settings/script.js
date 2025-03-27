@@ -5,9 +5,10 @@ const { settingsParentUrl, rootUrl } = getParentUrls();
 // Define the base URL for the widget customizer
 const widgetCustomizerBaseUrl = 'https://adrianopteodoro.github.io/widget-customizer';
 const settingsJsonUrl = `${settingsParentUrl}settings.json`;
+const languagesJsonUrl = `${settingsParentUrl}languages.json`; // URL for the local languages.json file
 
-// Set the settingsContainer.src to load the widget customizer with the settings JSON
-settingsContainer.src = `${widgetCustomizerBaseUrl}?settingsJson=${encodeURIComponent(settingsJsonUrl)}`;
+// Set the settingsContainer.src to load the widget customizer with the settings JSON and extraLanguageJson
+settingsContainer.src = `${widgetCustomizerBaseUrl}?settingsJson=${encodeURIComponent(settingsJsonUrl)}&extraLanguageJson=${encodeURIComponent(languagesJsonUrl)}`;
 console.log('Settings Container URL:', settingsContainer.src);
 
 function reloadWidget(data) {
