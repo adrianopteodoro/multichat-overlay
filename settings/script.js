@@ -1,29 +1,43 @@
 let settingsContainer = document.getElementById('settings-container');
-settingsContainer.src = `https://nuttylmao.github.io/widget-customizer?settingsJson=${window.location.href}/settings.json`
-console.log(settingsContainer.src);
+
+const { settingsParentUrl, rootUrl } = getParentUrls();
+
+// Define the base URL for the widget customizer
+const widgetCustomizerBaseUrl = 'https://adrianopteodoro.github.io/widget-customizer';
+const settingsJsonUrl = `${settingsParentUrl}settings.json`;
+
+// Set the settingsContainer.src to load the widget customizer with the settings JSON
+settingsContainer.src = `${widgetCustomizerBaseUrl}?settingsJson=${encodeURIComponent(settingsJsonUrl)}`;
+console.log('Settings Container URL:', settingsContainer.src);
 
 function reloadWidget(data) {
     let widget = document.getElementById("widget");
-    widget.src = `${getParentUrl()}?${data}`;
+
+    // Dynamically set the widget.src with the provided data
+    widget.src = `${rootUrl}?${data}`;
+    console.log('Widget URL:', widget.src);
 }
 
-function getParentUrl() {
+function getParentUrls() {
     const currentUrl = window.location.href;
     const urlParts = currentUrl.split('/');
 
     // Remove the last part of the URL (the current page/file)
     urlParts.pop();
 
-    // Remove the last part again to go one directory up
+    // Get the settings parent URL
+    const settingsParentUrl = urlParts.join('/');
+
+    // Remove the last part again to get the root URL
     urlParts.pop();
+    const rootUrl = urlParts.join('/');
 
-    // Reconstruct the URL
-    const parentUrl = urlParts.join('/');
+    // Ensure both URLs have a trailing slash
+    const formattedSettingsParentUrl = settingsParentUrl.endsWith('/') ? settingsParentUrl : settingsParentUrl + '/';
+    const formattedRootUrl = rootUrl.endsWith('/') ? rootUrl : rootUrl + '/';
 
-    // Ensure there's a trailing slash if necessary (if it was a directory)
-    if (urlParts.length > 2 && !parentUrl.endsWith('/')) {
-        return parentUrl + '/';
-    }
-
-    return parentUrl;
+    return {
+        settingsParentUrl: formattedSettingsParentUrl,
+        rootUrl: formattedRootUrl,
+    };
 }
