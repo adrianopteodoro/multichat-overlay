@@ -31,6 +31,8 @@ const ignoreChatters = urlParams.get("ignoreChatters") || "";
 const scrollDirection = GetIntParam("scrollDirection") || 1;
 const imageEmbedPermissionLevel = GetIntParam("imageEmbedPermissionLevel") || 20;
 
+const showKickMessages = GetBooleanParam("showKickMessages", true);
+
 const showTwitchMessages = GetBooleanParam("showTwitchMessages", true);
 const showTwitchAnnouncements = GetBooleanParam("showTwitchAnnouncements", true);
 const showTwitchSubs = GetBooleanParam("showTwitchSubs", true);
@@ -189,11 +191,138 @@ client.on('StreamElements.Tip', (response) => {
 	StreamElementsTip(response.data);
 })
 
+client.on('Kick.ChatMessage', (response) => {
+    console.debug(response.data);
+    KickChatMessage(response.data);
+})
+
 
 
 ///////////////////////
 // MULTICHAT OVERLAY //
 ///////////////////////
+
+// KICK PLATFORM //
+async function KickChatMessage(data) {
+    // Optionally add a showKickMessages param to toggle Kick messages
+    if (typeof showKickMessages !== 'undefined' && !showKickMessages)
+        return;
+
+    // Don't post messages starting with "!"
+    if (data.message.startsWith("!") && excludeCommands)
+        return;
+
+    // Don't post messages from users from the ignore list
+    if (ignoreUserList.includes(data.user.username))
+        return;
+
+    // Get a reference to the template
+    const template = document.getElementById('messageTemplate');
+
+    // Create a new instance of the template
+    const instance = template.content.cloneNode(true);
+
+    // Get divs
+    const userInfoDiv = instance.querySelector("#userInfo");
+    const avatarDiv = instance.querySelector("#avatar");
+    const timestampDiv = instance.querySelector("#timestamp");
+    const platformDiv = instance.querySelector("#platform");
+    const badgeListDiv = instance.querySelector("#badgeList");
+    const usernameDiv = instance.querySelector("#username");
+    const messageDiv = instance.querySelector("#message");
+
+    // Set timestamp
+    if (showTimestamps) {
+        timestampDiv.classList.add("timestamp");
+        timestampDiv.innerText = GetCurrentTimeFormatted();
+    }
+
+    // Set the message data
+    if (showUsername) {
+        usernameDiv.innerText = data.user.displayName || data.user.username;
+        usernameDiv.style.color = data.user.color || "#53fc18"; // Kick green
+    }
+
+    if (showMessage) {
+        messageDiv.innerText = data.message;
+    }
+
+    // Render platform
+    if (showPlatform) {
+        const platformElements = `<img src="icons/platforms/kick.png" class="platform"/>`;
+        platformDiv.innerHTML = platformElements;
+    }
+
+    // Render badges (Kick badges logic, if any)
+    if (showBadges && data.user.isModerator) {
+        const badge = new Image();
+        badge.src = `icons/badges/kick-moderator.svg`;
+        badge.classList.add("badge");
+        badgeListDiv.appendChild(badge);
+    }
+    if (showBadges && data.user.isOwner) {
+        const badge = new Image();
+        badge.src = `icons/badges/kick-owner.svg`;
+        badge.classList.add("badge");
+        badgeListDiv.appendChild(badge);
+    }
+    if (showBadges && data.user.isSubscriber) {
+        const badge = new Image();
+        badge.src = `icons/badges/kick-subscriber.svg`;
+        badge.classList.add("badge");
+        badgeListDiv.appendChild(badge);
+    }
+
+    // Render emotes (Kick emotes logic, if any)
+    if (Array.isArray(data.emotes)) {
+        for (let i in data.emotes) {
+            const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
+            messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
+        }
+    }
+
+    // Render avatars
+    if (showAvatar) {
+        const avatar = new Image();
+        avatar.src = data.user.profileImageUrl;
+        avatar.classList.add("avatar");
+        avatarDiv.appendChild(avatar);
+    }
+
+    // Hide the header if the same username sends a message twice in a row
+    // EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
+    const messageList = document.getElementById("messageList");
+    if (messageList.children.length > 0 && scrollDirection != 2) {
+        const lastPlatform = messageList.lastChild.dataset.platform;
+        const lastUserId = messageList.lastChild.dataset.userId;
+        if (lastPlatform == "kick" && lastUserId == data.user.id)
+            userInfoDiv.style.display = "none";
+    }
+
+    // Embed image
+    const message = data.message;
+    if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message)) {
+        const image = new Image();
+
+        image.onload = function () {
+            image.style.padding = "20px 0px";
+            image.style.width = "100%";
+            messageDiv.innerHTML = '';
+            messageDiv.appendChild(image);
+
+            AddMessageItem(instance, data.messageId, 'kick', data.user.id);
+        };
+
+        const urlObj = new URL(message);
+        urlObj.search = '';
+        urlObj.hash = '';
+
+        image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
+    }
+    else {
+        AddMessageItem(instance, data.messageId, 'kick', data.user.id);
+    }
+}
 
 async function TwitchChatMessage(data) {
 	if (!showTwitchMessages)
@@ -1232,9 +1361,9 @@ function IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyC
 }
 
 function GetPermissionLevel(data, platform) {
-	switch (platform) {
-		case 'twitch':
-			if (data.message.role >= 4)
+    switch (platform) {
+        case 'twitch':
+            if (data.message.role >= 4)
 				return 40;
 			else if (data.message.role >= 3)
 				return 30;
@@ -1244,7 +1373,7 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
-		case 'youtube':
+        case 'youtube':
 			if (data.user.isOwner)
 				return 40;
 			else if (data.user.isModerator)
@@ -1253,7 +1382,17 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
-	}
+        case 'kick':
+            // Example Kick permission logic
+            if (data.user.isOwner)
+                return 40;
+            else if (data.user.isModerator)
+                return 30;
+            else if (data.user.isSubscriber)
+                return 15;
+            else
+                return 10;
+    }
 }
 
 
