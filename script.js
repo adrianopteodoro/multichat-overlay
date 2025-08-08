@@ -208,6 +208,8 @@ async function KickChatMessage(data) {
     if (typeof showKickMessages !== 'undefined' && !showKickMessages)
         return;
 
+	consoles.log(data);
+
     // Don't post messages starting with "!"
     if (data.message.startsWith("!") && excludeCommands)
         return;
