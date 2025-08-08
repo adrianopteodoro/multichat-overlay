@@ -63,8 +63,7 @@ const ignoreUserList = ignoreChatters.split(',').map(item => item.trim().toLower
 
 // Set the scroll direction
 
-switch (scrollDirection)
-{
+switch (scrollDirection) {
 	case 1:
 		document.getElementById('messageList').classList.add('normalScrollDirection');
 		break;
@@ -72,7 +71,7 @@ switch (scrollDirection)
 		document.getElementById('messageList').classList.add('reverseScrollDirection');
 		break;
 }
-	
+
 
 
 
@@ -192,8 +191,8 @@ client.on('StreamElements.Tip', (response) => {
 })
 
 client.on('Kick.ChatMessage', (response) => {
-    console.debug(response.data);
-    KickChatMessage(response.data);
+	console.debug(response.data);
+	KickChatMessage(response.data);
 })
 
 
@@ -276,19 +275,7 @@ async function KickChatMessage(data) {
 		});
 	}
 
-	// Optionally render verified or subscribed badges
-	if (showBadges && data.user.isVerified) {
-		const badge = new Image();
-		badge.src = "icons/badges/kick-verified.svg";
-		badge.classList.add("badge");
-		badgeListDiv.appendChild(badge);
-	}
-	if (showBadges && data.user.isSubscribed) {
-		const badge = new Image();
-		badge.src = "icons/badges/kick-subscriber.svg";
-		badge.classList.add("badge");
-		badgeListDiv.appendChild(badge);
-	}
+
 
 	// Render avatar
 	if (showAvatar) {
@@ -818,7 +805,7 @@ function TwitchChatMessageDeleted(data) {
 	messagesToRemove.forEach(item => {
 		item.style.opacity = 0;
 		item.style.height = 0;
-		setTimeout(function() {
+		setTimeout(function () {
 			messageList.removeChild(item);
 		}, 1000);
 	});
@@ -1309,12 +1296,11 @@ function AddMessageItem(element, elementID, platform, userId) {
 		}
 
 		tempDiv.innerHTML = '';
-		
-		if (hideAfter > 0)
-		{
+
+		if (hideAfter > 0) {
 			setTimeout(function () {
 				lineItem.style.opacity = 0;
-				setTimeout(function() {
+				setTimeout(function () {
 					messageList.removeChild(lineItem);
 				}, 1000);
 			}, hideAfter * 1000);
@@ -1365,9 +1351,9 @@ function IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyC
 }
 
 function GetPermissionLevel(data, platform) {
-    switch (platform) {
-        case 'twitch':
-            if (data.message.role >= 4)
+	switch (platform) {
+		case 'twitch':
+			if (data.message.role >= 4)
 				return 40;
 			else if (data.message.role >= 3)
 				return 30;
@@ -1377,7 +1363,7 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
-        case 'youtube':
+		case 'youtube':
 			if (data.user.isOwner)
 				return 40;
 			else if (data.user.isModerator)
@@ -1386,17 +1372,17 @@ function GetPermissionLevel(data, platform) {
 				return 15;
 			else
 				return 10;
-        case 'kick':
-            // Example Kick permission logic
-            if (data.user.isOwner)
-                return 40;
-            else if (data.user.isModerator)
-                return 30;
-            else if (data.user.isSubscriber)
-                return 15;
-            else
-                return 10;
-    }
+		case 'kick':
+			// Example Kick permission logic
+			if (data.user.isOwner)
+				return 40;
+			else if (data.user.isModerator)
+				return 30;
+			else if (data.user.isSubscriber)
+				return 15;
+			else
+				return 10;
+	}
 }
 
 
