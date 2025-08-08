@@ -93,6 +93,14 @@
             "group": "general"
         },
         {
+            "id": "showKickMessages",
+            "label": "showKickMessages",
+            "description": "showKickMessagesDescription",
+            "type": "checkbox",
+            "defaultValue": true,
+            "group": "kickMessages"
+        },
+        {
             "id": "showTwitchMessages",
             "label": "showTwitchMessages",
             "description": "showTwitchMessagesDescription",

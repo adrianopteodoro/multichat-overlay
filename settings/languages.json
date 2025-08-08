@@ -31,6 +31,7 @@
         "appearance": "Appearance",
         "general": "General",
         "twitchMessages": "Which Twitch messages do you want to see?",
+        "kickMessages": "Which Kick messages do you want to see?",
         "donationMessages": "Which donation messages do you want to see?",
         "advanced": "Advanced",
         "showPlatformDescription": "Show or hide the platform name.",
@@ -44,6 +45,7 @@
         "ignoreChattersDescription": "Ignored chatters will not be shown.",
         "scrollDirectionDescription": "Set the scroll direction for chat messages.",
         "showTwitchMessagesDescription": "Show Twitch chat messages.",
+        "showKickMessagesDescription": "Show Kick chat messages.",
         "showTwitchAnnouncementsDescription": "Show Twitch announcements.",
         "showStreamlabsDonationsDescription": "Show Streamlabs donation messages.",
         "showStreamElementsTipsDescription": "Show StreamElements tip messages.",
@@ -56,7 +58,8 @@
         "imageEmbedPermissionLevel20": "VIPs, Mods & Broadcaster",
         "imageEmbedPermissionLevel15": "Subs, VIPs, Mods & Broadcaster",
         "imageEmbedPermissionLevel10": "Everyone",
-        "imageEmbedPermissionLevel69420": "Nobody"
+        "imageEmbedPermissionLevel69420": "Nobody",
+        "showKickMessages": "Kick Chat Messages"
     },
     "pt": {
         "showPlatform": "Mostrar Plataforma",
@@ -90,6 +93,7 @@
         "appearance": "Aparência",
         "general": "Geral",
         "twitchMessages": "Quais mensagens do Twitch você quer ver?",
+        "kickMessages": "Quais mensagens do Kick você quer ver?",
         "donationMessages": "Quais mensagens de doação você quer ver?",
         "advanced": "Avançado",
         "showPlatformDescription": "Mostrar ou ocultar o nome da plataforma.",
@@ -103,6 +107,7 @@
         "ignoreChattersDescription": "Usuários ignorados não serão exibidos.",
         "scrollDirectionDescription": "Defina a direção de rolagem das mensagens do chat.",
         "showTwitchMessagesDescription": "Mostrar mensagens do chat do Twitch.",
+        "showKickMessagesDescription": "Mostrar mensagens do chat do Kick.",
         "showTwitchAnnouncementsDescription": "Mostrar anúncios do Twitch.",
         "showStreamlabsDonationsDescription": "Mostrar mensagens de doação do Streamlabs.",
         "showStreamElementsTipsDescription": "Mostrar mensagens de gorjetas do StreamElements.",
@@ -115,7 +120,8 @@
         "imageEmbedPermissionLevel20": "VIPs, Mods e Transmissor",
         "imageEmbedPermissionLevel15": "Subs, VIPs, Mods e Transmissor",
         "imageEmbedPermissionLevel10": "Todos",
-        "imageEmbedPermissionLevel69420": "Ninguém"
+        "imageEmbedPermissionLevel69420": "Ninguém",
+        "showKickMessages": "Mensagens do Chat Kick"
     },
     "es": {
         "showPlatform": "Mostrar Plataforma",
@@ -149,6 +155,7 @@
         "appearance": "Apariencia",
         "general": "General",
         "twitchMessages": "¿Qué mensajes de Twitch quieres ver?",
+        "kickMessages": "¿Qué mensajes de Kick quieres ver?",
         "donationMessages": "¿Qué mensajes de donación quieres ver?",
         "advanced": "Avanzado",
         "showPlatformDescription": "Mostrar u ocultar el nombre de la plataforma.",
@@ -162,6 +169,7 @@
         "ignoreChattersDescription": "Los usuarios ignorados no se mostrarán.",
         "scrollDirectionDescription": "Establezca la dirección de desplazamiento para los mensajes del chat.",
         "showTwitchMessagesDescription": "Mostrar mensajes del chat de Twitch.",
+        "showKickMessagesDescription": "Mostrar mensajes del chat de Kick.",
         "showTwitchAnnouncementsDescription": "Mostrar anuncios de Twitch.",
         "showStreamlabsDonationsDescription": "Mostrar mensajes de donación de Streamlabs.",
         "showStreamElementsTipsDescription": "Mostrar mensajes de propinas de StreamElements.",
@@ -174,7 +182,8 @@
         "imageEmbedPermissionLevel20": "VIPs, Mods y Transmisor",
         "imageEmbedPermissionLevel15": "Subs, VIPs, Mods y Transmisor",
         "imageEmbedPermissionLevel10": "Todos",
-        "imageEmbedPermissionLevel69420": "Nadie"
+        "imageEmbedPermissionLevel69420": "Nadie",
+        "showKickMessages": "Mensajes del Chat Kick"
     },
     "fr": {
         "showPlatform": "Afficher la Plateforme",
@@ -208,6 +217,7 @@
         "appearance": "Apparence",
         "general": "Général",
         "twitchMessages": "Quels messages Twitch voulez-vous voir ?",
+        "kickMessages": "Quels messages Kick voulez-vous voir ?",
         "donationMessages": "Quels messages de don sont à afficher ?",
         "advanced": "Avancé",
         "showPlatformDescription": "Afficher ou masquer le nom de la plateforme.",
@@ -221,6 +231,7 @@
         "ignoreChattersDescription": "Les utilisateurs ignorés ne seront pas affichés.",
         "scrollDirectionDescription": "Définissez la direction de défilement des messages du chat.",
         "showTwitchMessagesDescription": "Afficher les messages du chat Twitch.",
+        "showKickMessagesDescription": "Afficher les messages du chat Kick.",
         "showTwitchAnnouncementsDescription": "Afficher les annonces Twitch.",
         "showStreamlabsDonationsDescription": "Afficher les messages de don Streamlabs.",
         "showStreamElementsTipsDescription": "Afficher les messages de pourboires StreamElements.",
@@ -233,7 +244,8 @@
         "imageEmbedPermissionLevel20": "VIPs, Mods et Diffuseur",
         "imageEmbedPermissionLevel15": "Abonnés, VIPs, Mods et Diffuseur",
         "imageEmbedPermissionLevel10": "Tout le monde",
-        "imageEmbedPermissionLevel69420": "Personne"
+        "imageEmbedPermissionLevel69420": "Personne",
+        "showKickMessages": "Messages du Chat Kick"
     },
     "de": {
         "showPlatform": "Plattform Anzeigen",
@@ -267,6 +279,7 @@
         "appearance": "Aussehen",
         "general": "Allgemein",
         "twitchMessages": "Welche Twitch-Nachrichten möchten Sie sehen?",
+        "kickMessages": "Welche Kick-Nachrichten möchten Sie sehen?",
         "donationMessages": "Welche Spenden-Nachrichten möchten Sie sehen?",
         "advanced": "Erweitert",
         "showPlatformDescription": "Den Plattformnamen anzeigen oder ausblenden.",
@@ -280,6 +293,7 @@
         "ignoreChattersDescription": "Ignorierte Benutzer werden nicht angezeigt.",
         "scrollDirectionDescription": "Richtung des Scrollens für Chat-Nachrichten festlegen.",
         "showTwitchMessagesDescription": "Twitch-Chat-Nachrichten anzeigen.",
+        "showKickMessagesDescription": "Kick-Chat-Nachrichten anzeigen.",
         "showTwitchAnnouncementsDescription": "Twitch-Ankündigungen anzeigen.",
         "showStreamlabsDonationsDescription": "Streamlabs-Spendennachrichten anzeigen.",
         "showStreamElementsTipsDescription": "StreamElements-Trinkgeldnachrichten anzeigen.",
@@ -292,6 +306,7 @@
         "imageEmbedPermissionLevel20": "VIPs, Mods und Sender",
         "imageEmbedPermissionLevel15": "Abonnenten, VIPs, Mods und Sender",
         "imageEmbedPermissionLevel10": "Jeder",
-        "imageEmbedPermissionLevel69420": "Niemand"
+        "imageEmbedPermissionLevel69420": "Niemand",
+        "showKickMessages": "Kick-Chat-Nachrichten"
     }
 }
