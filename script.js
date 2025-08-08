@@ -204,126 +204,128 @@ client.on('Kick.ChatMessage', (response) => {
 
 // KICK PLATFORM //
 async function KickChatMessage(data) {
-    // Optionally add a showKickMessages param to toggle Kick messages
-    if (typeof showKickMessages !== 'undefined' && !showKickMessages)
-        return;
+	// Optionally add a showKickMessages param to toggle Kick messages
+	if (typeof showKickMessages !== 'undefined' && !showKickMessages)
+		return;
 
-	console.log(data);
+	// Don't post messages starting with "!"
+	if (data.text && data.text.startsWith("!") && excludeCommands)
+		return;
 
-    // Don't post messages starting with "!"
-    if (data.message.startsWith("!") && excludeCommands)
-        return;
+	// Don't post messages from users from the ignore list
+	if (ignoreUserList.includes(data.user.login))
+		return;
 
-    // Don't post messages from users from the ignore list
-    if (ignoreUserList.includes(data.user.username))
-        return;
+	// Get a reference to the template
+	const template = document.getElementById('messageTemplate');
+	const instance = template.content.cloneNode(true);
 
-    // Get a reference to the template
-    const template = document.getElementById('messageTemplate');
+	// Get divs
+	const userInfoDiv = instance.querySelector("#userInfo");
+	const avatarDiv = instance.querySelector("#avatar");
+	const timestampDiv = instance.querySelector("#timestamp");
+	const platformDiv = instance.querySelector("#platform");
+	const badgeListDiv = instance.querySelector("#badgeList");
+	const usernameDiv = instance.querySelector("#username");
+	const messageDiv = instance.querySelector("#message");
 
-    // Create a new instance of the template
-    const instance = template.content.cloneNode(true);
+	// Set timestamp
+	if (showTimestamps) {
+		timestampDiv.classList.add("timestamp");
+		timestampDiv.innerText = GetCurrentTimeFormatted();
+	}
 
-    // Get divs
-    const userInfoDiv = instance.querySelector("#userInfo");
-    const avatarDiv = instance.querySelector("#avatar");
-    const timestampDiv = instance.querySelector("#timestamp");
-    const platformDiv = instance.querySelector("#platform");
-    const badgeListDiv = instance.querySelector("#badgeList");
-    const usernameDiv = instance.querySelector("#username");
-    const messageDiv = instance.querySelector("#message");
+	// Set the username and color
+	if (showUsername) {
+		usernameDiv.innerText = data.user.name || data.user.login;
+		usernameDiv.style.color = data.user.color || "#31D6C2";
+	}
 
-    // Set timestamp
-    if (showTimestamps) {
-        timestampDiv.classList.add("timestamp");
-        timestampDiv.innerText = GetCurrentTimeFormatted();
-    }
+	// Set the message text and emotes (use parts if available)
+	if (showMessage) {
+		if (Array.isArray(data.parts) && data.parts.length > 0) {
+			messageDiv.innerHTML = data.parts.map(part => {
+				if (part.type === "text") {
+					return part.text;
+				} else if (part.type === "emote" && part.imageUrl) {
+					return `<img src="${part.imageUrl}" alt="${part.text}" title="${part.text}" class="emote" style="height:1.5em;vertical-align:middle;"/>`;
+				} else {
+					return "";
+				}
+			}).join("");
+		} else {
+			messageDiv.innerText = data.text || "";
+		}
+	}
 
-    // Set the message data
-    if (showUsername) {
-        usernameDiv.innerText = data.user.displayName || data.user.username;
-        usernameDiv.style.color = data.user.color || "#53fc18"; // Kick green
-    }
+	// Render platform
+	if (showPlatform) {
+		const platformElements = `<img src="icons/platforms/kick.png" class="platform"/>`;
+		platformDiv.innerHTML = platformElements;
+	}
 
-    if (showMessage) {
-        messageDiv.innerText = data.message;
-    }
+	// Render badges from data.user.badges array
+	if (showBadges && Array.isArray(data.user.badges)) {
+		data.user.badges.forEach(badgeObj => {
+			const badge = new Image();
+			badge.src = badgeObj.imageUrl || '';
+			badge.alt = badgeObj.name || '';
+			badge.title = badgeObj.name || '';
+			badge.classList.add("badge");
+			badgeListDiv.appendChild(badge);
+		});
+	}
 
-    // Render platform
-    if (showPlatform) {
-        const platformElements = `<img src="icons/platforms/kick.png" class="platform"/>`;
-        platformDiv.innerHTML = platformElements;
-    }
+	// Optionally render verified or subscribed badges
+	if (showBadges && data.user.isVerified) {
+		const badge = new Image();
+		badge.src = "icons/badges/kick-verified.svg";
+		badge.classList.add("badge");
+		badgeListDiv.appendChild(badge);
+	}
+	if (showBadges && data.user.isSubscribed) {
+		const badge = new Image();
+		badge.src = "icons/badges/kick-subscriber.svg";
+		badge.classList.add("badge");
+		badgeListDiv.appendChild(badge);
+	}
 
-    // Render badges (Kick badges logic, if any)
-    if (showBadges && data.user.isModerator) {
-        const badge = new Image();
-        badge.src = `icons/badges/kick-moderator.svg`;
-        badge.classList.add("badge");
-        badgeListDiv.appendChild(badge);
-    }
-    if (showBadges && data.user.isOwner) {
-        const badge = new Image();
-        badge.src = `icons/badges/kick-owner.svg`;
-        badge.classList.add("badge");
-        badgeListDiv.appendChild(badge);
-    }
-    if (showBadges && data.user.isSubscriber) {
-        const badge = new Image();
-        badge.src = `icons/badges/kick-subscriber.svg`;
-        badge.classList.add("badge");
-        badgeListDiv.appendChild(badge);
-    }
+	// Render avatar
+	if (showAvatar) {
+		const avatar = new Image();
+		avatar.src = data.user.profilePicture || '';
+		avatar.classList.add("avatar");
+		avatarDiv.appendChild(avatar);
+	}
 
-    // Render emotes (Kick emotes logic, if any)
-    if (Array.isArray(data.emotes)) {
-        for (let i in data.emotes) {
-            const emoteElement = `<img src="${data.emotes[i].imageUrl}" class="emote"/>`;
-            messageDiv.innerHTML = messageDiv.innerHTML.replace(data.emotes[i].name, emoteElement);
-        }
-    }
+	// Hide the header if the same username sends a message twice in a row
+	// EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
+	const messageList = document.getElementById("messageList");
+	if (messageList.children.length > 0 && scrollDirection != 2) {
+		const lastPlatform = messageList.lastChild.dataset.platform;
+		const lastUserId = messageList.lastChild.dataset.userId;
+		if (lastPlatform == "kick" && lastUserId == data.user.id)
+			userInfoDiv.style.display = "none";
+	}
 
-    // Render avatars
-    if (showAvatar) {
-        const avatar = new Image();
-        avatar.src = data.user.profileImageUrl;
-        avatar.classList.add("avatar");
-        avatarDiv.appendChild(avatar);
-    }
-
-    // Hide the header if the same username sends a message twice in a row
-    // EXCEPT when the scroll direction is set to reverse (scrollDirection == 2)
-    const messageList = document.getElementById("messageList");
-    if (messageList.children.length > 0 && scrollDirection != 2) {
-        const lastPlatform = messageList.lastChild.dataset.platform;
-        const lastUserId = messageList.lastChild.dataset.userId;
-        if (lastPlatform == "kick" && lastUserId == data.user.id)
-            userInfoDiv.style.display = "none";
-    }
-
-    // Embed image
-    const message = data.message;
-    if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message)) {
-        const image = new Image();
-
-        image.onload = function () {
-            image.style.padding = "20px 0px";
-            image.style.width = "100%";
-            messageDiv.innerHTML = '';
-            messageDiv.appendChild(image);
-
-            AddMessageItem(instance, data.messageId, 'kick', data.user.id);
-        };
-
-        const urlObj = new URL(message);
-        urlObj.search = '';
-        urlObj.hash = '';
-
-        image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
-    }
-    else {
-        AddMessageItem(instance, data.messageId, 'kick', data.user.id);
-    }
+	// Embed image if allowed and message is an image URL
+	const message = data.text;
+	if (IsThisUserAllowedToPostImagesOrNotReturnTrueIfTheyCanReturnFalseIfTheyCannot(imageEmbedPermissionLevel, data, 'kick') && IsImageUrl(message)) {
+		const image = new Image();
+		image.onload = function () {
+			image.style.padding = "20px 0px";
+			image.style.width = "100%";
+			messageDiv.innerHTML = '';
+			messageDiv.appendChild(image);
+			AddMessageItem(instance, data.messageId, 'kick', data.user.id);
+		};
+		const urlObj = new URL(message);
+		urlObj.search = '';
+		urlObj.hash = '';
+		image.src = "https://external-content.duckduckgo.com/iu/?u=" + urlObj.toString();
+	} else {
+		AddMessageItem(instance, data.messageId, 'kick', data.user.id);
+	}
 }
 
 async function TwitchChatMessage(data) {
